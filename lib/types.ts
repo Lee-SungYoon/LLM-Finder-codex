@@ -5,4 +5,5 @@ export interface AIModel {
   params: string; memory: string; fit: number; license: LicenseClass; commercial: boolean | "conditional";
   formats: string[]; apps: AppKey[]; updated: string; benchmark: string; frontier?: boolean; confidence: "High" | "Medium" | "Low";
   downloadFile?: string; installTarget?: string; outputHint?: string;
+  repoUrl?: string; mlxUrl?: string; ggufUrl?: string;
 }
