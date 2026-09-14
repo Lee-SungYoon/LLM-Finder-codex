@@ -23,7 +23,15 @@ const fileName = (model: AIModel) => model.downloadFile ?? ({
 }[model.id] ?? `${model.name.replace(/\s+/g, "-")}-${model.formats[0].toLowerCase()}.safetensors`);
 const appName = (model: AIModel) => model.installTarget ?? model.apps[0];
 const formatFor = (model: AIModel, platform: Platform) => platform === "mac" && model.formats.includes("MLX") ? "MLX" : model.formats.includes("GGUF") ? "GGUF" : model.formats[0];
-const formatUrl = (model: AIModel, platform: Platform) => platform === "mac" && model.mlxUrl ? model.mlxUrl : model.ggufUrl ?? model.repoUrl ?? `https://huggingface.co/models?search=${encodeURIComponent(model.name)}`;
+const formatUrl = (model: AIModel, platform: Platform) => {
+  const variants: Record<string, { mlx?: string; gguf?: string }> = {
+    "qwen3-8": { mlx: "https://huggingface.co/models?search=Qwen3.8-27B%20MLX", gguf: "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF" },
+    "qwen-coder": { gguf: "https://huggingface.co/models?search=Qwen3-Coder-Next%20GGUF" },
+    "qwen-image": { mlx: "https://huggingface.co/models?search=Qwen-Image%20MLX" },
+    "qwen-asr": { mlx: "https://huggingface.co/models?search=Qwen3-ASR%20MLX" }
+  };
+  const variant = variants[model.id]; return platform === "mac" ? variant?.mlx ?? model.mlxUrl ?? model.repoUrl ?? `https://huggingface.co/models?search=${encodeURIComponent(model.name)}%20MLX` : variant?.gguf ?? model.ggufUrl ?? model.repoUrl ?? `https://huggingface.co/models?search=${encodeURIComponent(model.name)}%20GGUF`;
+};
 
 function FitBadge({ score }: { score: number }) { const color = score >= 70 ? "good" : score >= 45 ? "warn" : "bad"; const label = score >= 90 ? "Excellent" : score >= 70 ? "Recommended" : score >= 45 ? "Optimization" : "Cloud recommended"; return <span className={`fit ${color}`}><i /> {label}</span>; }
 function ModelCard({ model, mode, platform, selected, onSelect, onGuide }: { model: AIModel; mode: "global" | "local"; platform: Platform; selected: boolean; onSelect: () => void; onGuide: () => void }) {
@@ -33,7 +41,7 @@ function ModelCard({ model, mode, platform, selected, onSelect, onGuide }: { mod
     <p className="desc">{model.description}</p><div className="tags">{model.tags.map(t => <span key={t}>{t}</span>)}</div>
     <div className="metric-grid"><div><small>PARAMETERS</small><strong>{model.params}</strong></div><div><small>MEMORY</small><strong>{model.memory}</strong></div><div><small>LICENSE</small><strong className={model.commercial === true ? "lime" : "amber"}>{model.license}</strong></div></div>
     <div className="fit-row"><FitBadge score={mode === "local" ? score : model.fit} /><span className="score">{mode === "local" ? score : model.fit}<small>/100 fit</small></span></div>
-    <div className="apps"><span>실행 앱</span>{model.apps.slice(0, 3).map(a => <b key={a}>{a}</b>)}</div><div className="filename"><span>{platform === "mac" ? "Mac 권장" : `${platform} 권장`}</span><a href={formatUrl(model, platform)} target="_blank" rel="noreferrer" title="Hugging Face에서 파일 확인"><code>{fileName(model)}</code></a></div>
+    <div className="apps"><span>실행 앱</span>{model.apps.slice(0, 3).map(a => <b key={a}>{a}</b>)}</div><div className="filename"><span>{platform === "mac" ? "Mac 권장" : `${platform} 권장`} · {formatFor(model, platform)}</span><a href={formatUrl(model, platform)} target="_blank" rel="noreferrer" title="Hugging Face에서 파일 확인"><code>{fileName(model)}</code></a></div>
     <div className="verify-line"><Check size={12} /> {primaryApp} 실행 경로 · {model.confidence} 신뢰도</div>
     <button className="guide-btn" onClick={onGuide}>사용법과 근거 보기 <ArrowUpRight size={15} /></button>
   </article>
