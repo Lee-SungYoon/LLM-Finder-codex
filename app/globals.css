@@ -19,6 +19,9 @@ h1 span { color:var(--lime); }
 .hero h1 { font-size:clamp(25px,3vw,41px); }
 .hero-copy { max-width:470px; color:#99a2a6; line-height:1.65; font-size:15px; }
 .hero-actions { display:flex; gap:12px; margin-top:34px; }
+.os-cta { display:flex; align-items:center; gap:12px; color:#fff; background:var(--indigo-600); padding:7px 10px 7px 16px; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; }
+.os-cta select { color:#E2E8F0; background:#11133A; border:1px solid #6266D9; border-radius:7px; padding:8px 28px 8px 10px; font-size:10px; outline:0; cursor:pointer; }
+.os-cta:focus-within { outline:2px solid var(--indigo-400); outline-offset:3px; }
 .primary,.ghost,.guide-btn,.full-guide { border:0; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:9px; }
 .primary { background:var(--lime); color:#10140f; padding:13px 18px; font-weight:700; font-size:12px; border-radius:3px; }
 .ghost { color:#abb4b7; background:transparent; padding:12px 15px; font-size:12px; }
