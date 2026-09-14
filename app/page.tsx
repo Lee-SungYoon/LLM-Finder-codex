@@ -7,7 +7,19 @@ import { AIModel } from "../lib/types";
 
 const categories = ["All models", "LLM", "Coding", "Image generation", "Video generation", "STT", "Music generation", "OCR / Document AI", "Segmentation", "Depth / Geometry", "3D generation"];
 const filters = ["Open Source", "Commercial use", "Local only", "Apple Silicon", "Quantized"];
-const fileName = (model: AIModel) => model.downloadFile ?? `${model.name.replace(/\s+/g, "-")}-${model.formats[0].toLowerCase()}.safetensors`;
+const fileName = (model: AIModel) => model.downloadFile ?? ({
+  "qwen3-8": "Qwen3.8-27B-Q4_K_M.gguf",
+  "qwen-coder": "Qwen3-Coder-Next-Q4_K_M.gguf",
+  "qwen-image": "Qwen-Image-8bit.safetensors",
+  "ideogram-4": "ideogram-4-nf4.safetensors",
+  "ace-step": "ace-step-1.5-xl-turbo.safetensors",
+  "qwen-asr": "Qwen3-ASR-1.7B",
+  "glm-ocr": "GLM-OCR-0.9B",
+  "sam-31": "sam3.1_hiera_large.pt",
+  "depth-3": "depth_anything_v3.safetensors",
+  "trellis-2": "TRELLIS.2-4B-int8.safetensors",
+  "glm-53": "GLM-5.3-BF16.safetensors"
+}[model.id] ?? `${model.name.replace(/\s+/g, "-")}-${model.formats[0].toLowerCase()}.safetensors`);
 const appName = (model: AIModel) => model.installTarget ?? model.apps[0];
 
 function FitBadge({ score }: { score: number }) { const color = score >= 70 ? "good" : score >= 45 ? "warn" : "bad"; const label = score >= 90 ? "Excellent" : score >= 70 ? "Recommended" : score >= 45 ? "Optimization" : "Cloud recommended"; return <span className={`fit ${color}`}><i /> {label}</span>; }
