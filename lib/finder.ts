@@ -1,8 +1,12 @@
 import { models } from "./models";
 import { Platform } from "./scoring";
-import { AIModel } from "./types";
+import { AIModel, HubModel } from "./types";
 
 export const categories = ["All models", ...Array.from(new Set(models.map(model => model.category)))];
+
+export function isReasoningCandidate(model: Pick<HubModel, "id" | "name" | "tags" | "evaluations">): boolean {
+  return /reason|thinking/i.test(`${model.id} ${model.name} ${model.tags.join(" ")}`) || model.evaluations.some(evaluation => ["aime-2026", "gpqa-diamond", "mmlu-pro"].includes(evaluation.benchmarkId));
+}
 
 export function questionQuery(question: string): string {
   const trimmed = question.trim();

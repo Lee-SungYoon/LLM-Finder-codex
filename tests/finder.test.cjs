@@ -39,3 +39,11 @@ test('Q4 formats prefer GGUF on Windows and missing formats remain safe', () => 
   assert.match(qwen.url, /GGUF/i);
   assert.doesNotThrow(() => finder.downloadFor({...models[0], formats:[]}, 'linux'));
 });
+
+test('reasoning candidates include Hugging Face benchmark evidence even without reasoning tags', () => {
+  const { isReasoningCandidate } = require('../lib/finder.ts');
+  const base = { id:'org/general', name:'general', tags:['text-generation'], evaluations:[] };
+  assert.equal(isReasoningCandidate(base), false);
+  assert.equal(isReasoningCandidate({...base, id:'openai/gpt-oss-20b', evaluations:[{benchmarkId:'gpqa-diamond'}]}), true);
+  assert.equal(isReasoningCandidate({...base, tags:['reasoning']}), true);
+});
