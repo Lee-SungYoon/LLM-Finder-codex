@@ -6,7 +6,7 @@
 | Task 2: Evidence ranking | `node --test tests/value-ranking.test.cjs` | Pass. Values require two models with the same ≥2 benchmark IDs, same evidence cohort, and positive GGUF file size. |
 | Task 3: Freshness/fallback | `node --test tests/catalog-cache.test.cjs` | Pass. Fresh response on each page load, validated local cache, blocked-storage handling, stale cache/seed fallback and retry. |
 | Task 4: UI | `npm test`, `npm run typecheck`, `npm run build`; production browser tests | Pass. Live LLMs replace static LLM/reasoning cards; gpt-oss and manually reviewed NVIDIA candidate appear in reasoning; search works; value control is disabled without common evidence. 390px emulated viewport reported `clientWidth=390`, `scrollWidth=390`. Initial mobile capture exposed toolbar overflow; wrapped the search and status and rechecked. |
-| Task 5: Publish | Independent whole-branch review; `npm test`; `npm run typecheck`; `npm run build`; `git diff --check`; production HTTP smoke | Review found and fixes were applied for unknown gated/disabled status, losing in-memory last-good data on retry failure, and evaluation dedupe overwriting verified evidence. 19 tests pass; build/typecheck and HTTP smoke pass. Push verification pending. |
+| Task 5: Publish | Independent whole-branch review; `npm test`; `npm run typecheck`; `npm run build`; `git diff --check`; production HTTP smoke; remote SHA check | Review findings fixed; 19 tests pass; build, typecheck and HTTP smoke pass. Commits `ad1d062`, `95457c0`, and `990a3e2` pushed to `origin/codex/open-ai-finder-mvp`. |
 
 ## Rulings
 

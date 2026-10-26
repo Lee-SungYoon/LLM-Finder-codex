@@ -100,6 +100,6 @@
 
 **Files:** all approved implementation and tests.
 
-- [ ] Review final diff and `git diff --check`; confirm model metadata remains external/untrusted display data.
-- [ ] Commit the implementation on `codex/open-ai-finder-mvp`.
-- [ ] Fetch and push the branch, then verify local and remote refs match and the worktree is clean.
+- [x] Review final diff and `git diff --check`; confirm model metadata remains external/untrusted display data.
+- [x] Commit the implementation on `codex/open-ai-finder-mvp`.
+- [x] Fetch and push the branch, then verify local and remote refs match and the worktree is clean.
