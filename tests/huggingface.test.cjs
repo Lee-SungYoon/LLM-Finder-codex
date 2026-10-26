@@ -46,3 +46,16 @@ test('keeps unknown license explicit and never trusts an external repository URL
   assert.equal(result.models[0].license, null);
   assert.equal(result.models[0].url, 'https://huggingface.co/org/z');
 });
+
+test('rejects models with unknown gated or disabled status', async () => {
+  const {fetcher} = fetcherFor({createdAt:[row('org/a',{gated:undefined})],trendingScore:[row('org/b',{disabled:undefined})],downloads:[row('org/c',{gated:'false',disabled:false})]});
+  const result = await fetchLatestModels(fetcher, new Date('2026-10-27T00:00:00Z'));
+  assert.deepEqual(result.models.map(x=>x.id), ['org/c']);
+});
+
+test('preserves verified and publisher-reported evaluations as separate evidence', async () => {
+  const evaluation = (verified, score) => ({verified,data:{dataset:{id:'GPQA Diamond',task_id:'text-generation'},value:score,source:{url:'https://example.com/card'}}});
+  const {fetcher} = fetcherFor({createdAt:[row('org/a',{evalResults:[evaluation(true,70)]})],trendingScore:[row('org/a',{evalResults:[evaluation(false,65)]})],downloads:[]});
+  const result = await fetchLatestModels(fetcher, new Date('2026-10-27T00:00:00Z'));
+  assert.deepEqual(result.models[0].evaluations.map(x=>x.cohort).sort(), ['publisher-reported','verified']);
+});

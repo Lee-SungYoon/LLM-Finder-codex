@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUpRight, Bot, Check, ChevronDown, Cpu, ExternalLink, Filter, Github, Search, Sparkles, Terminal, X, Zap } from "lucide-react";
 import { models } from "../lib/models";
 import { Platform, rankModels, scoreForHardware } from "../lib/scoring";
@@ -45,6 +45,7 @@ function HubModelCard(props: RankedHubModel) {
 
 export default function Home() {
   const [mode, setMode] = useState<"global" | "local">("local"); const [category, setCategory] = useState("All models"); const [query, setQuery] = useState(""); const [question, setQuestion] = useState(""); const [activeFilters, setActiveFilters] = useState<string[]>([]); const [selected, setSelected] = useState<string[]>([]); const [guide, setGuide] = useState<AIModel | null>(models[0]); const [showMethod, setShowMethod] = useState(false); const [platform, setPlatform] = useState<Platform>("mac"); const [hubModels, setHubModels] = useState<HubModel[]>([]); const [hubSource, setHubSource] = useState<"fresh" | "cached" | "seed">("seed"); const [hubFetchedAt, setHubFetchedAt] = useState<string | undefined>(); const [hubLoading, setHubLoading] = useState(false); const [hubError, setHubError] = useState<string>(); const [hubSort, setHubSort] = useState<"trending" | "recent" | "value">("trending");
+  const lastGoodCatalog = useRef<Pick<HubCatalogResponse, "models" | "fetchedAt"> | undefined>(undefined);
   const refreshHubCatalog = useCallback(async () => {
     setHubLoading(true); setHubError(undefined);
     try {
@@ -52,15 +53,17 @@ export default function Home() {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const payload = await response.json() as HubCatalogResponse;
       if (!isValidHubCatalogResponse(payload)) throw new Error("Invalid model catalog");
-      writeBrowserCachedCatalog(payload); setHubModels(payload.models); setHubFetchedAt(payload.fetchedAt); setHubSource("fresh");
+      lastGoodCatalog.current = payload; writeBrowserCachedCatalog(payload); setHubModels(payload.models); setHubFetchedAt(payload.fetchedAt); setHubSource("fresh");
     } catch {
-      const cached = readBrowserCachedCatalog();
-      if (cached) { setHubModels(cached.models); setHubFetchedAt(cached.fetchedAt); setHubSource("cached"); }
-      else { setHubModels([]); setHubFetchedAt(undefined); setHubSource("seed"); }
+      if (!lastGoodCatalog.current) {
+        const cached = readBrowserCachedCatalog();
+        if (cached) { lastGoodCatalog.current = cached; setHubModels(cached.models); setHubFetchedAt(cached.fetchedAt); setHubSource("cached"); }
+        else { setHubModels([]); setHubFetchedAt(undefined); setHubSource("seed"); }
+      }
       setHubError("실시간 목록을 가져오지 못했습니다. 마지막 저장 데이터 또는 기본 카탈로그를 표시합니다.");
     } finally { setHubLoading(false); }
   }, []);
-  useEffect(() => { const cached = readBrowserCachedCatalog(); if (cached) { setHubModels(cached.models); setHubFetchedAt(cached.fetchedAt); setHubSource("cached"); } void refreshHubCatalog(); const ua = navigator.userAgent.toLowerCase(); setPlatform(ua.includes("mac") ? "mac" : ua.includes("win") ? "windows" : "linux"); }, [refreshHubCatalog]);
+  useEffect(() => { const cached = readBrowserCachedCatalog(); if (cached) { lastGoodCatalog.current = cached; setHubModels(cached.models); setHubFetchedAt(cached.fetchedAt); setHubSource("cached"); } void refreshHubCatalog(); const ua = navigator.userAgent.toLowerCase(); setPlatform(ua.includes("mac") ? "mac" : ua.includes("win") ? "windows" : "linux"); }, [refreshHubCatalog]);
   useEffect(() => { const onKey = (event: KeyboardEvent) => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { event.preventDefault(); document.getElementById("model-search")?.focus(); } }; window.addEventListener("keydown", onKey); return () => window.removeEventListener("keydown", onKey); }, []);
   const visible = useMemo(() => { const catalogIsLive = hubSource === "fresh" || hubSource === "cached"; let list = rankModels(catalogIsLive ? models.filter(m => m.category !== "LLM" && m.category !== "Reasoning") : models, mode, 64, platform); if (category !== "All models") list = list.filter(m => m.category === category); if (query) list = list.filter(m => `${m.name} ${m.org} ${m.category} ${m.description} ${m.tags.join(" ")}`.toLowerCase().includes(query.toLowerCase())); if (activeFilters.includes("Open Source")) list = list.filter(m => m.license === "Open Source"); if (activeFilters.includes("Commercial use")) list = list.filter(m => m.commercial === true); if (activeFilters.includes("Local only")) list = list.filter(m => !m.frontier); if (activeFilters.includes("Apple Silicon")) list = list.filter(m => m.formats.includes("MLX") || m.apps.includes("MLX")); if (activeFilters.includes("Quantized")) list = list.filter(m => m.formats.some(f => /Q|INT|NF|8-bit/i.test(f))); return list; }, [mode, category, query, activeFilters, platform, hubSource]);
   const liveLLMVisible = useMemo(() => {

@@ -47,7 +47,9 @@ export function normalizeHubModel(value: unknown): HubModel | null {
   if (!isRecord(value) || typeof value.id !== "string") return null;
   const id = value.id;
   if (!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(id)) return null;
-  if (value.pipeline_tag !== "text-generation" || value.gated === true || (typeof value.gated === "string" && value.gated !== "false") || value.disabled === true) return null;
+  const explicitlyUngated = value.gated === false || value.gated === "false";
+  const explicitlyEnabled = value.disabled === false || value.disabled === "false";
+  if (value.pipeline_tag !== "text-generation" || !explicitlyUngated || !explicitlyEnabled) return null;
 
   const card = isRecord(value.cardData) ? value.cardData : {};
   const safetensors = isRecord(value.safetensors) ? value.safetensors : {};
@@ -72,7 +74,7 @@ export function normalizeHubModel(value: unknown): HubModel | null {
 
 function dedupeEvaluations(evaluations: HubEvaluation[]): HubEvaluation[] {
   const result: Record<string, HubEvaluation> = Object.create(null);
-  for (const evaluation of evaluations) result[`${evaluation.benchmarkId}:${evaluation.taskId}`] = evaluation;
+  for (const evaluation of evaluations) result[`${evaluation.benchmarkId}:${evaluation.taskId}:${evaluation.cohort}`] = evaluation;
   return Object.values(result);
 }
 
