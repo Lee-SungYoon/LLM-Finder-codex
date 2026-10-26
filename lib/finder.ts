@@ -4,8 +4,10 @@ import { AIModel, HubModel } from "./types";
 
 export const categories = ["All models", ...Array.from(new Set(models.map(model => model.category)))];
 
+const REVIEWED_REASONING_CANDIDATES = new Set(["nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB"]);
+
 export function isReasoningCandidate(model: Pick<HubModel, "id" | "name" | "tags" | "evaluations">): boolean {
-  return /reason|thinking/i.test(`${model.id} ${model.name} ${model.tags.join(" ")}`) || model.evaluations.some(evaluation => ["aime-2026", "gpqa-diamond", "mmlu-pro"].includes(evaluation.benchmarkId));
+  return REVIEWED_REASONING_CANDIDATES.has(model.id) || /reason|thinking/i.test(`${model.id} ${model.name} ${model.tags.join(" ")}`) || model.evaluations.some(evaluation => ["aime-2026", "gpqa-diamond", "mmlu-pro"].includes(evaluation.benchmarkId));
 }
 
 export function questionQuery(question: string): string {

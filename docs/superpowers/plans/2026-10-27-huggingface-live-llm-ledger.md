@@ -2,9 +2,13 @@
 
 | Step | Verification | Outcome / ruling |
 | --- | --- | --- |
-| Hub normalization | `node --test tests/huggingface.test.cjs` | Public metadata only; bounded 3-sort fetch; dedupe/filter/URL checks pass. Actual Hub route returned 60 models. |
-| Value ranking | `node --test tests/value-ranking.test.cjs` | Requires 2+ common approved benchmark IDs, same evidence cohort, positive GGUF size; no fabricated score. |
-| Cache fallback | `node --test tests/catalog-cache.test.cjs` | Invalid/empty storage is ignored; stale successful catalogs remain usable; empty response is not written. |
-| Production browser | `http://localhost:3003` | Fresh status rendered, 60 Hub models were visible, static task categories remained, value/file metadata showed unknown where evidence was absent. |
-| Production build | `npm run build` | Passed before final UI wording and size-display correction; repeat before push. |
-| Full verification | Pending | Run full tests/typecheck/build, production API and browser smoke checks after final edits. |
+| Task 1: Hub normalization | `node --test tests/huggingface.test.cjs`; production `GET /api/models` | Pass. Three bounded Hub lists merge/dedupe; malformed, empty, gated, disabled, unknown-license and unsafe-ID cases covered. Production returned 60 valid records with `Cache-Control: no-store`; 16 had GGUF size and 5 had evaluation metadata in the sampled response. |
+| Task 2: Evidence ranking | `node --test tests/value-ranking.test.cjs` | Pass. Values require two models with the same ≥2 benchmark IDs, same evidence cohort, and positive GGUF file size. |
+| Task 3: Freshness/fallback | `node --test tests/catalog-cache.test.cjs` | Pass. Fresh response on each page load, validated local cache, blocked-storage handling, stale cache/seed fallback and retry. |
+| Task 4: UI | `npm test`, `npm run typecheck`, `npm run build`; production browser tests | Pass. Live LLMs replace static LLM/reasoning cards; gpt-oss and manually reviewed NVIDIA candidate appear in reasoning; search works; value control is disabled without common evidence. 390px emulated viewport reported `clientWidth=390`, `scrollWidth=390`. Initial mobile capture exposed toolbar overflow; wrapped the search and status and rechecked. |
+| Task 5: Publish | GitHub remote comparison | Pending final reviewer and push. |
+
+## Rulings
+
+- Ruling: Keep value rankings to a single benchmark-set/cohort group shared by at least two models. This is stricter than scoring every available pair, but avoids ranking incomparable published benchmark subsets; it can leave otherwise useful candidates unscored.
+- Ruling: Do not auto-promote a reasoning model to a default from Hub popularity or publisher-only scores. NVIDIA Nemotron 3.5 Bolt E4B is included as a manually reviewed candidate, but the current Hub list API reports its license as `other` and does not expose its model-card benchmark table as structured evaluation results; the app therefore shows unknown license and no value score. The cost if this errs on the cautious side is that a useful model may not become the default until comparable structured evidence appears.

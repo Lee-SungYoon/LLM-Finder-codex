@@ -46,4 +46,5 @@ test('reasoning candidates include Hugging Face benchmark evidence even without 
   assert.equal(isReasoningCandidate(base), false);
   assert.equal(isReasoningCandidate({...base, id:'openai/gpt-oss-20b', evaluations:[{benchmarkId:'gpqa-diamond'}]}), true);
   assert.equal(isReasoningCandidate({...base, tags:['reasoning']}), true);
+  assert.equal(isReasoningCandidate({...base, id:'nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB', name:'NVIDIA-Nemotron-3.5-Bolt-E4B-4GB'}), true);
 });

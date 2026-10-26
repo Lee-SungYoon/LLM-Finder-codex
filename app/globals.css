@@ -96,3 +96,16 @@ small { display:block; color:#758087; font-size:9px; letter-spacing:.08em; margi
 .hub-badges span { border:1px solid var(--border);border-radius:20px;padding:4px 8px;color:#cbd5e1;font-size:10px }
 .hub-value { color:#c7d2fe;font-weight:700 }
 @media(max-width:600px){.hub-status{align-items:flex-start}.hub-sort{align-items:flex-start}.hub-card{padding:15px}}
+@media(max-width:560px){
+  .hero,.finder,.bottom-section,.hero>* ,.finder>* ,.bottom-section>*{min-width:0}
+  .hardware-card{min-width:0;width:100%}
+  .hardware-specs{gap:clamp(12px,4vw,24px);flex-wrap:wrap}
+  .memory-bar span{min-width:0;flex:1}
+  .memory-bar i{white-space:normal}
+  .hero-copy{width:100%}
+}
+@media(max-width:560px){
+  .toolbar{flex-wrap:wrap}
+  .searchbox{flex:1 1 100%}
+  .live-toggle{width:100%;height:auto;padding:12px;white-space:normal}
+}

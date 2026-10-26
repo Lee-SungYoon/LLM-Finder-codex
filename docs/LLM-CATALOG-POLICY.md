@@ -15,4 +15,5 @@
 - Never combine verified and publisher-reported evaluation cohorts. Show the cohort and benchmark coverage next to any value score. If evidence or file size is missing, show no score and rank the model by the selected discovery sort.
 - The value sort stays disabled unless at least two comparable models exist. This storage-normalized benchmark index is not tokens per second, runtime memory, hardware fit, or a measured inference cost. It does not identify a winner by itself.
 - Show license as unknown when the Hub model card lacks a recognized license. Do not infer commercial permission from missing metadata. Link to the repository so users can verify current terms before use.
+- The manually reviewed reasoning shortlist includes `nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB` because its current publisher card provides quantized reasoning benchmarks; keep it labeled as a candidate until it has comparable Hub evaluation metadata.
 - Do not automatically replace task-specific defaults based only on trends. A new candidate can become a curated default only after comparable benchmark, quantized-file, license, and supported-hardware evidence is reviewed.

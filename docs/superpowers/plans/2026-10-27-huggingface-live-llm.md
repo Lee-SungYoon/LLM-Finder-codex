@@ -42,11 +42,11 @@
 - `HubModel`: `{ id, author, name, url, createdAt, updatedAt, downloads, likes, gated, disabled, license, parameterCount, artifactSizeBytes, formats, evaluations[] }`
 - Evaluation: `{ benchmarkId, taskId, score, verified, sourceUrl, cohort }`
 
-- [ ] Write failing normalization tests for API sorting, metadata shaping, ID deduplication, and filtering gated/disabled/non-text-generation entries.
-- [ ] Write failing tests for timeouts, HTTP 429/5xx, malformed JSON, and empty result rejection.
-- [ ] Run `npm test` and verify each new case fails for the expected contract.
-- [ ] Implement a bounded, no-store parallel fetch for `createdAt`, `trendingScore`, and `downloads`, requesting only spec fields; validate and normalize responses and return HTTP cache-control no-store from the route.
-- [ ] Run `npm test` and `npm run typecheck`.
+- [x] Write failing normalization tests for API sorting, metadata shaping, ID deduplication, and filtering gated/disabled/non-text-generation entries.
+- [x] Write failing tests for timeouts, HTTP 429/5xx, malformed JSON, and empty result rejection.
+- [x] Run `npm test` and verify each new case fails for the expected contract.
+- [x] Implement a bounded, no-store parallel fetch for `createdAt`, `trendingScore`, and `downloads`, requesting only spec fields; validate and normalize responses and return HTTP cache-control no-store from the route.
+- [x] Run `npm test` and `npm run typecheck`.
 
 ### Task 2: Evidence-based value ranking
 
@@ -61,8 +61,8 @@
 
 - [ ] Test identical ≥2 benchmark subsets within a cohort; assert that one shared score is insufficient, unmatched benchmark subsets do not compare, and evidence cohorts never mix.
 - [ ] Test that verified and publisher-reported cohorts never compare against each other; missing quantized file size yields no value index.
-- [ ] Implement the exact formula and tie-breaks in the approved spec, validating score ranges and positive finite artifact sizes.
-- [ ] Run the ranking tests, full `npm test`, and typecheck.
+- [x] Implement the exact formula and tie-breaks in the approved spec, validating score ranges and positive finite artifact sizes.
+- [x] Run the ranking tests, full `npm test`, and typecheck.
 
 ### Task 3: Per-load freshness and safe fallback
 
@@ -77,11 +77,11 @@
 - `readCachedCatalog(storage): CachedCatalog | undefined`
 - `writeCachedCatalog(storage, response): void`
 
-- [ ] Test valid timestamped storage parse, malformed JSON rejection, stale display, and refusal to persist an empty response.
-- [ ] Implement page-mount fetch with `cache: "no-store"`, save only a valid non-empty response, and restore last successful response or bundled LLM seeds on failure.
-- [ ] Add bounded manual retry, freshness/source status, retryable error state, and Korean loading/cached/seed copy.
-- [ ] Keep non-LLM category records and existing search, filters, selection, and comparison behaviors intact.
-- [ ] Run unit tests and typecheck.
+- [x] Test valid timestamped storage parse, malformed JSON rejection, stale display, and refusal to persist an empty response.
+- [x] Implement page-mount fetch with `cache: "no-store"`, save only a valid non-empty response, and restore last successful response or bundled LLM seeds on failure.
+- [x] Add bounded manual retry, freshness/source status, retryable error state, and Korean loading/cached/seed copy.
+- [x] Keep non-LLM category records and existing search, filters, selection, and comparison behaviors intact.
+- [x] Run unit tests and typecheck.
 
 ### Task 4: Live LLM and value UI
 
@@ -90,11 +90,11 @@
 - Modify: `app/globals.css`
 - Test: production browser flow
 
-- [ ] Add tests/assertions or browser checks for dynamic LLM card rendering, license unknown state, benchmark provenance, storage estimate, and no-score fallback ordering.
-- [ ] Replace static LLM cards with fetched records after successful refresh; keep seed LLM cards as fallback and keep non-LLM cards in existing categories.
-- [ ] Provide recent/trending/value sort controls; disable value sort without a comparable cohort and show exact score coverage, verification cohort, and file-GB units.
-- [ ] Verify 390 px layout, keyboard focus/selection, filters/search, manual retry, fallback states, and browser console.
-- [ ] Run `npm test`, `npm run typecheck`, `npm run build`, and production server HTTP/browser checks.
+- [x] Add tests/assertions or browser checks for dynamic LLM card rendering, license unknown state, benchmark provenance, storage estimate, and no-score fallback ordering.
+- [x] Replace static LLM cards with fetched records after successful refresh; keep seed LLM cards as fallback and keep non-LLM cards in existing categories.
+- [x] Provide recent/trending/value sort controls; disable value sort without a comparable cohort and show exact score coverage, verification cohort, and file-GB units.
+- [x] Verify 390 px layout, keyboard focus/selection, filters/search, manual retry, fallback states, and browser console.
+- [x] Run `npm test`, `npm run typecheck`, `npm run build`, and production server HTTP/browser checks.
 
 ### Task 5: Publish repository update
 
